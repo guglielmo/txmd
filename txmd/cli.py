@@ -5,7 +5,6 @@ from typing import Optional
 
 import typer
 from rich.console import Console
-from textual import events, on
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import ScrollableContainer
@@ -134,7 +133,8 @@ def main(
             stdin_content = read_stdin()
             if not stdin_content:
                 console.print(
-                    "[red]Error:[/] No input provided. Please provide a file or pipe content to txmd."
+                    "[red]Error:[/] No input provided. "
+                    "Please provide a file or pipe content to txmd."
                 )
                 sys.exit(1)
             content = stdin_content
