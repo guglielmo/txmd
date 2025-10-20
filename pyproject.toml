@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "txmd"
-version = "0.2.0"
+version = "0.3.0"
 description = "A textual markdown viewer CLI"
 authors = ["Guglielmo Celata <guglielmo.celata@gmail.com>"]
 license = "MIT"

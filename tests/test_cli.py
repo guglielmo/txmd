@@ -1,14 +1,13 @@
 """Tests for txmd CLI functionality."""
-import io
-import sys
-from pathlib import Path
-from unittest.mock import Mock, patch, mock_open
+
+from unittest.mock import Mock, patch
 
 import pytest
-from textual.widgets import Markdown
-from textual.containers import ScrollableContainer
+import typer
+from typer.testing import CliRunner
 
-from txmd.cli import MarkdownViewerApp, read_stdin
+from txmd import __version__
+from txmd.cli import MarkdownViewerApp, app, read_stdin, version_callback
 
 
 class TestMarkdownViewerApp:
@@ -60,7 +59,7 @@ class TestMarkdownViewerApp:
 class TestReadStdin:
     """Tests for the read_stdin function."""
 
-    @patch('sys.stdin')
+    @patch("sys.stdin")
     def test_read_stdin_with_piped_input(self, mock_stdin):
         """Test reading from stdin when input is piped."""
         mock_stdin.isatty.return_value = False
@@ -71,7 +70,7 @@ class TestReadStdin:
         assert result == "# Piped Content\n\nTest"
         mock_stdin.read.assert_called_once()
 
-    @patch('sys.stdin')
+    @patch("sys.stdin")
     def test_read_stdin_with_terminal(self, mock_stdin):
         """Test reading from stdin when running in terminal."""
         mock_stdin.isatty.return_value = True
@@ -81,8 +80,8 @@ class TestReadStdin:
         assert result == ""
         mock_stdin.read.assert_not_called()
 
-    @patch('sys.stdin')
-    @patch('builtins.open')
+    @patch("sys.stdin")
+    @patch("builtins.open")
     def test_read_stdin_reopens_terminal(self, mock_open_fn, mock_stdin):
         """Test that stdin is reopened to /dev/tty after reading."""
         mock_stdin.isatty.return_value = False
@@ -95,10 +94,12 @@ class TestReadStdin:
         # Should attempt to reopen /dev/tty
         assert result == "content"
 
-    @patch('sys.stdin')
-    @patch('builtins.open', side_effect=Exception("No TTY"))
-    def test_read_stdin_handles_tty_reopen_failure(self, mock_open_fn, mock_stdin):
-        """Test that the function handles failure to reopen TTY gracefully."""
+    @patch("sys.stdin")
+    @patch("builtins.open", side_effect=Exception("No TTY"))
+    def test_read_stdin_handles_tty_reopen_failure(
+        self, mock_open_fn, mock_stdin
+    ):
+        """Test that function handles TTY reopen failure gracefully."""
         mock_stdin.isatty.return_value = False
         mock_stdin.read.return_value = "content"
 
@@ -110,7 +111,7 @@ class TestReadStdin:
 class TestMainCommand:
     """Tests for the main command function."""
 
-    @patch('txmd.cli.MarkdownViewerApp')
+    @patch("txmd.cli.MarkdownViewerApp")
     def test_main_with_file(self, mock_app_class, tmp_path):
         """Test main command with a file argument."""
         # Create a temporary markdown file
@@ -124,15 +125,15 @@ class TestMainCommand:
         from txmd.cli import main
 
         # Call main with the file
-        with patch('sys.exit'):
+        with patch("sys.exit"):
             main(test_file)
 
         # Verify app was created with file content
         mock_app_class.assert_called_once_with(test_content)
         mock_app_instance.run.assert_called_once()
 
-    @patch('txmd.cli.MarkdownViewerApp')
-    @patch('txmd.cli.read_stdin')
+    @patch("txmd.cli.MarkdownViewerApp")
+    @patch("txmd.cli.read_stdin")
     def test_main_with_stdin(self, mock_read_stdin, mock_app_class):
         """Test main command with stdin input."""
         stdin_content = "# Piped Markdown\n\nFrom stdin"
@@ -143,15 +144,15 @@ class TestMainCommand:
 
         from txmd.cli import main
 
-        with patch('sys.exit'):
+        with patch("sys.exit"):
             main(None)
 
         # Verify app was created with stdin content
         mock_app_class.assert_called_once_with(stdin_content)
         mock_app_instance.run.assert_called_once()
 
-    @patch('txmd.cli.read_stdin')
-    @patch('rich.console.Console.print')
+    @patch("txmd.cli.read_stdin")
+    @patch("rich.console.Console.print")
     def test_main_no_input_exits(self, mock_print, mock_read_stdin):
         """Test that main exits when no input is provided."""
         mock_read_stdin.return_value = ""
@@ -164,7 +165,7 @@ class TestMainCommand:
         assert exc_info.value.code == 1
         mock_print.assert_called()
 
-    @patch('txmd.cli.MarkdownViewerApp')
+    @patch("txmd.cli.MarkdownViewerApp")
     def test_main_handles_exceptions(self, mock_app_class, tmp_path):
         """Test that main handles exceptions gracefully."""
         test_file = tmp_path / "test.md"
@@ -178,6 +179,44 @@ class TestMainCommand:
             main(test_file)
 
         assert exc_info.value.code == 1
+
+
+class TestVersionOption:
+    """Tests for version option functionality."""
+
+    def test_version_callback_with_true(self):
+        """Test that version_callback displays version and exits."""
+        with pytest.raises(typer.Exit):
+            version_callback(True)
+
+    def test_version_callback_with_false(self):
+        """Test that version_callback does nothing when False."""
+        # Should not raise an exception
+        version_callback(False)
+
+    def test_version_flag_long(self, tmp_path):
+        """Test --version flag displays version and exits."""
+        runner = CliRunner()
+        result = runner.invoke(app, ["--version"])
+
+        assert result.exit_code == 0
+        assert "txmd version" in result.output
+        assert __version__ in result.output
+
+    def test_version_flag_short(self, tmp_path):
+        """Test -v flag displays version and exits."""
+        runner = CliRunner()
+        result = runner.invoke(app, ["-v"])
+
+        assert result.exit_code == 0
+        assert "txmd version" in result.output
+        assert __version__ in result.output
+
+    def test_version_format(self):
+        """Test that __version__ is a valid string."""
+        assert isinstance(__version__, str)
+        assert len(__version__) > 0
+        assert __version__ != "unknown"
 
 
 class TestIntegration:
