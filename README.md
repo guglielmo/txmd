@@ -1,5 +1,3 @@
-# txmd
-
 A modern, feature-rich terminal-based Markdown viewer with pipeline support,
 built with [Textual](https://github.com/Textualize/textual).
 
@@ -29,6 +27,7 @@ built with [Textual](https://github.com/Textualize/textual).
 
 - 📝 Render Markdown files directly in your terminal
 - 🔄 Pipeline support - pipe markdown content directly to txmd
+- 🗂️ **Dynamic Table of Contents** - Navigate long documents with hierarchical TOC
 - 🎨 Syntax highlighting for code blocks
 - 📊 Table support
 - 🖼️ Beautiful TUI interface powered by Textual
@@ -69,6 +68,29 @@ cat document.md | txmd
 curl https://raw.githubusercontent.com/user/repo/main/README.md | txmd
 ```
 
+### Table of Contents
+
+For documents with headers, txmd provides a dynamic Table of Contents sidebar:
+
+**Toggle TOC:**
+- `t` - Show/hide the Table of Contents panel
+
+**Using the TOC:**
+- The TOC automatically parses all headers (# through ######) in your document
+- Headers are displayed in a hierarchical tree structure
+- Navigate with arrow keys (`↑`/`↓`) when TOC is focused
+- Press `Enter` to expand/collapse sections with subsections
+- Press `Space` to jump to the selected section (positions it at top of screen)
+- Click a header to jump directly to that section
+- Leaf sections (no subsections) have no expand icon for cleaner display
+- Hidden by default to maximize reading space
+
+The TOC is especially useful for:
+- Long documentation files with many sections
+- README files with multiple chapters
+- Technical documentation with nested topics
+- Any structured markdown content
+
 ### Navigation
 
 Inside the viewer, you can navigate using vim-style keys or traditional navigation keys:
@@ -100,6 +122,7 @@ Complete list of all keybindings:
 | `b`, `Page Up` | Page Up | Scroll up by viewport height |
 | `Home` | Jump to Top | Scroll to the beginning of the document |
 | `End` | Jump to Bottom | Scroll to the end of the document |
+| `t` | Toggle TOC | Show/hide Table of Contents sidebar |
 | `q`, `Ctrl+C` | Quit | Exit the application |
 
 > **Note:** All scrolling operations happen instantly without animation for a responsive feel.
@@ -234,10 +257,12 @@ poetry run black txmd/ && poetry run isort txmd/ && poetry run flake8 txmd/ && p
 txmd/
 ├── txmd/
 │   ├── __init__.py      # Package initialization
-│   └── cli.py           # Main application (CLI + TUI)
+│   ├── cli.py           # Main application (CLI + TUI)
+│   └── toc.py           # Table of Contents module
 ├── tests/
 │   ├── __init__.py
-│   └── test_cli.py      # Test suite
+│   ├── test_cli.py      # CLI test suite
+│   └── test_toc.py      # TOC test suite
 ├── examples/            # Example markdown files
 │   ├── basic.md
 │   ├── code-blocks.md
@@ -369,10 +394,19 @@ A: Open an issue on [GitHub](https://github.com/guglielmo/txmd/issues) with deta
 
 ## Roadmap
 
-### v0.2.0 - Enhanced Features (In Progress)
+### v0.4.0 - Table of Contents (Released)
 
-Priority features currently being developed:
+**Completed:**
+- [x] **Table of Contents** - Dynamic TOC with hierarchical navigation
+  - Hierarchical tree view of document headers
+  - Toggle with 't' key
+  - Navigate with arrow keys, expand/collapse with Enter, jump with Space
+  - Filters headers in code blocks
+- [x] **Comprehensive Testing** - 84% test coverage with UI interaction tests
 
+### v0.5.0 - Enhanced Features (Planned)
+
+**In Development:**
 - [ ] **Multi-file support** - View multiple markdown files with tab navigation
 - [ ] **Search functionality** - Find text within documents with incremental search
 - [ ] **Bookmark support** - Mark and jump to important sections
@@ -385,7 +419,6 @@ Additional features planned for future releases:
 - [ ] **Configuration file** - User preferences and custom keybindings
 - [ ] **GitHub Flavored Markdown** - Extended markdown syntax support
 - [ ] **Image preview** - Terminal graphics protocol support (Kitty, iTerm2)
-- [ ] **TOC navigation** - Quick jump to headers
 - [ ] **Export functionality** - Convert to HTML, PDF
 - [ ] **Watch mode** - Auto-reload on file changes
 - [ ] **Split view** - View two documents side by side

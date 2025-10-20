@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "txmd"
-version = "0.3.0"
+version = "0.4.0"
 description = "A textual markdown viewer CLI"
 authors = ["Guglielmo Celata <guglielmo.celata@gmail.com>"]
 license = "MIT"
@@ -40,6 +40,7 @@ pytest-cov = "^6.0.0"
 black = "^24.10.0"
 isort = "^5.13.2"
 flake8 = "^7.1.1"
+pytest-asyncio = "^1.2.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -47,3 +48,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 txmd = "txmd.cli:app"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

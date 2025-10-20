@@ -47,6 +47,7 @@ class TestMarkdownViewerApp:
         assert "j" in binding_keys
         assert "k" in binding_keys
         assert "space" in binding_keys
+        assert "t" in binding_keys  # TOC toggle binding
 
     def test_css_defined(self):
         """Test that CSS is defined."""
@@ -54,6 +55,46 @@ class TestMarkdownViewerApp:
         assert hasattr(app, "CSS")
         assert isinstance(app.CSS, str)
         assert len(app.CSS) > 0
+
+    def test_toc_state_initialization(self):
+        """Test that TOC state is properly initialized."""
+        content = "# Test Content"
+        app = MarkdownViewerApp(content)
+
+        assert hasattr(app, "toc_visible")
+        assert app.toc_visible is False  # Hidden by default
+        assert hasattr(app, "header_positions")
+        assert isinstance(app.header_positions, dict)
+        assert hasattr(app, "toc_nodes")
+        assert isinstance(app.toc_nodes, dict)
+
+    def test_toggle_toc_action_exists(self):
+        """Test that toggle_toc action method exists."""
+        app = MarkdownViewerApp("# Test")
+
+        assert hasattr(app, "action_toggle_toc")
+        assert callable(app.action_toggle_toc)
+
+    def test_populate_toc_method_exists(self):
+        """Test that _populate_toc helper method exists."""
+        app = MarkdownViewerApp("# Test")
+
+        assert hasattr(app, "_populate_toc")
+        assert callable(app._populate_toc)
+
+    def test_scroll_to_line_method_exists(self):
+        """Test that _scroll_to_line helper method exists."""
+        app = MarkdownViewerApp("# Test")
+
+        assert hasattr(app, "_scroll_to_line")
+        assert callable(app._scroll_to_line)
+
+    def test_tree_node_selection_handler_exists(self):
+        """Test that tree node selection handler exists."""
+        app = MarkdownViewerApp("# Test")
+
+        assert hasattr(app, "on_tree_node_selected")
+        assert callable(app.on_tree_node_selected)
 
 
 class TestReadStdin:
@@ -128,8 +169,8 @@ class TestMainCommand:
         with patch("sys.exit"):
             main(test_file)
 
-        # Verify app was created with file content
-        mock_app_class.assert_called_once_with(test_content)
+        # Verify app was created with file content and filename
+        mock_app_class.assert_called_once_with(test_content, "test.md")
         mock_app_instance.run.assert_called_once()
 
     @patch("txmd.cli.MarkdownViewerApp")
@@ -147,8 +188,8 @@ class TestMainCommand:
         with patch("sys.exit"):
             main(None)
 
-        # Verify app was created with stdin content
-        mock_app_class.assert_called_once_with(stdin_content)
+        # Verify app was created with stdin content and None filename
+        mock_app_class.assert_called_once_with(stdin_content, None)
         mock_app_instance.run.assert_called_once()
 
     @patch("txmd.cli.read_stdin")

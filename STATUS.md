@@ -2,9 +2,9 @@
 
 ## Current State
 
-**Version**: 0.1.3
+**Version**: 0.4.0
 **Status**: Alpha (Development Status :: 3 - Alpha)
-**Last Updated**: 2024-11-24
+**Last Updated**: 2025-01-20
 
 ### Working Features
 
@@ -17,11 +17,16 @@
 - ✅ Syntax highlighting for code blocks
 - ✅ Table support
 - ✅ Terminal restoration after reading from stdin
+- ✅ **Dynamic Table of Contents (TOC)**
+  - Hierarchical tree structure showing document headers
+  - Toggle with 't' key
+  - Navigate with arrow keys, Enter to expand/collapse, Space to jump to section
+  - Filters out headers in code blocks
+  - Content shifts right when TOC is visible
 
 ### Known Limitations
 
 - ❌ No multi-file support (cannot view multiple files simultaneously)
-- ❌ No table of contents (TOC) generation or navigation
 - ❌ No search functionality within documents
 - ❌ No configuration file support
 - ❌ No custom theme support
@@ -31,12 +36,6 @@
 ## Todo List
 
 ### High Priority Features
-
-- [ ] **Dynamic Table of Contents (TOC)**
-  - Parse markdown headers to generate TOC
-  - Add sidebar/panel to display TOC structure
-  - Implement navigation to jump to sections
-  - Add keybinding to toggle TOC visibility (e.g., `t`)
 
 - [ ] **Multi-file Support**
   - Accept multiple file arguments: `txmd file1.md file2.md file3.md`
@@ -95,15 +94,18 @@
 
 ### Code Quality & Developer Experience
 
-- [ ] **Test Coverage**
-  - Add unit tests for CLI argument parsing
-  - Add tests for stdin handling
-  - Add integration tests for Textual app
+- [x] **Test Coverage** (84% overall coverage)
+  - ✅ Unit tests for CLI argument parsing
+  - ✅ Tests for stdin handling
+  - ✅ UI interaction tests for Textual app
+  - ✅ Comprehensive TOC parsing and tree building tests
 
-- [ ] **Documentation**
-  - Add API documentation
-  - Create contribution guidelines
-  - Add examples directory
+- [x] **Documentation**
+  - ✅ Comprehensive README with usage examples
+  - ✅ CONTRIBUTING.md with contribution guidelines
+  - ✅ ARCHITECTURE.md with technical details
+  - ✅ Examples directory with sample markdown files
+  - ✅ CLAUDE.md for AI assistant context
 
 - [ ] **CI/CD Pipeline**
   - Automated testing on push
@@ -112,8 +114,25 @@
 
 ## Recent Changes
 
+### 0.4.0 (2025-01-20)
+- **Major Feature**: Dynamic Table of Contents (TOC)
+  - Hierarchical tree view of document headers
+  - Toggle TOC visibility with 't' key
+  - Navigate to sections with Space key
+  - Expand/collapse tree branches with Enter
+  - Filters headers in code blocks
+  - Content shifts when TOC is visible
+- **Testing**: Added comprehensive UI interaction tests (84% coverage)
+- Added pytest-asyncio for async testing support
+- Updated documentation (CLAUDE.md, STATUS.md)
+
+### 0.3.0 (2024-11-24)
+- Added --version flag
+- Improved documentation
+- Fixed code quality issues
+
 ### 0.1.3 (2024-11-24)
-- Current published version on PyPI
+- Initial published version on PyPI
 - Basic markdown viewing functionality
 - Pipeline support with stdin handling
 
@@ -121,4 +140,4 @@
 
 - Python support: 3.9 - 3.12
 - Primary dependencies: Textual (^0.86.3), Typer (^0.13.1), Markdown (^3.7)
-- Development tools: pytest, black, isort, flake8
+- Development tools: pytest, pytest-asyncio, pytest-cov, black, isort, flake8
