@@ -7,9 +7,9 @@ import typer
 from rich.console import Console
 from textual import events, on
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.containers import ScrollableContainer
 from textual.widgets import Markdown
-from textual.binding import Binding
 
 app = typer.Typer(
     name="txmd",
