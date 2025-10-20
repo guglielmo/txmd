@@ -101,7 +101,7 @@ def read_stdin() -> str:
         # Reopen stdin as terminal
         try:
             sys.stdin.close()
-            sys.__stdin__ = sys.stdin = open('/dev/tty')
+            sys.__stdin__ = sys.stdin = open("/dev/tty")
         except Exception:
             # If we can't reopen the terminal, continue anyway
             pass
@@ -111,13 +111,13 @@ def read_stdin() -> str:
 
 @app.command()
 def main(
-        file: Optional[Path] = typer.Argument(
-            None,
-            help="Markdown file to display. If not provided, reads from stdin.",
-            exists=True,
-            dir_okay=False,
-            readable=True,
-        )
+    file: Optional[Path] = typer.Argument(
+        None,
+        help="Markdown file to display. If not provided, reads from stdin.",
+        exists=True,
+        dir_okay=False,
+        readable=True,
+    )
 ) -> None:
     """
     Display markdown content in the terminal.
@@ -128,12 +128,14 @@ def main(
 
     try:
         if file:
-            with open(file, 'r', encoding='utf-8') as f:
+            with open(file, "r", encoding="utf-8") as f:
                 content = f.read()
         else:
             stdin_content = read_stdin()
             if not stdin_content:
-                console.print("[red]Error:[/] No input provided. Please provide a file or pipe content to txmd.")
+                console.print(
+                    "[red]Error:[/] No input provided. Please provide a file or pipe content to txmd."
+                )
                 sys.exit(1)
             content = stdin_content
 
